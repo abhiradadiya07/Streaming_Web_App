@@ -1,9 +1,11 @@
 const previewVideo = document.getElementById("preview-video");
-const startButton = document.getElementById("start-btn");
+const startButton = document.getElementById("startbtn");
 
 const state = { media: null };
+const socket = io();
 
-startButton.addEventListener("click", () => {
+
+startButton.addEventListener('click', () => {
   //Its a inbuilt media recorder of browser :  MediaRecorder
   const mediaRecorder = new MediaRecorder(state.media, {
     audioBitsPerSecond: 128000,
@@ -12,10 +14,13 @@ startButton.addEventListener("click", () => {
   });
   mediaRecorder.ondataavailable = (ev) => {
     console.log("Binary Stream Available", ev.data);
+    socket.emit('binaryStream', ev.data);
   };
+
+  mediaRecorder.start(25);
 });
 
-window.addEventListener("load", async (e) => {
+window.addEventListener('load', async (e) => {
   const media = await navigator.mediaDevices.getUserMedia({
     audio: true,
     video: true,
